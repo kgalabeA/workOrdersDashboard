@@ -1,0 +1,19 @@
+.region-chip {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #334155;
+  color: #cbd5e1;
+  display: inline-block;
+}
+
+.region-chip[data-region="GP"] { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+.region-chip[data-region="WC"] { background: rgba(168, 85, 247, 0.2); color: #e9d5ff; }
+.region-chip[data-region="KZN"] { background: rgba(20, 184, 166, 0.2); color: #99f6e4; }
+.region-chip[data-region="EC"] { background: rgba(245, 158, 11, 0.2); color: #fde68a; }
+.region-chip[data-region="FS"] { background: rgba(236, 72, 153, 0.2); color: #fbcfe8; }
+.region-chip[data-region="AMER"] { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+.region-chip[data-region="EMEA"] { background: rgba(168, 85, 247, 0.2); color: #e9d5ff; }
+.region-chip[data-region="APAC"] { background: rgba(20, 184, 166, 0.2); color: #99f6e4; }
+

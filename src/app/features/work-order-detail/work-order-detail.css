@@ -1,0 +1,414 @@
+   Header
+.detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ============================
+   Header
+   ============================ */
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  flex-wrap: wrap;
+}
+
+.back-btn {
+  color: #94a3b8;
+  border-color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.back-btn:hover {
+  color: #60a5fa;
+  border-color: #60a5fa;
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.header-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+
+.header-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.sim-toggle {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.toggle-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fca5a5;
+}
+
+/* ============================
+   State Containers
+   ============================ */
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  gap: 16px;
+  flex: 1;
+}
+
+.state-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  color: #475569;
+}
+
+.error-icon {
+  color: #ef4444;
+}
+
+.state-heading {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.state-text {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+  max-width: 420px;
+}
+
+/* ============================
+   ID Banner
+   ============================ */
+.id-banner {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 1px solid #334155;
+  border-left: 4px solid #3b82f6;
+  border-radius: 12px;
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.id-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.id-value {
+  font-family: monospace;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #60a5fa;
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+.id-actions {
+  margin-left: auto;
+}
+
+.update-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ============================
+   Detail Grid
+   ============================ */
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.notes-card {
+  grid-column: 1 / -1;
+}
+
+/* ============================
+   Detail Cards
+   ============================ */
+.detail-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.detail-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+}
+
+.detail-card.highlight-card {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.detail-card.overdue-card {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #1e293b, rgba(239, 68, 68, 0.06));
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #0f172a;
+  border-bottom: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-header mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #60a5fa;
+}
+
+.card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============================
+   Field Rows
+   ============================ */
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+}
+
+.field-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.field-value {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ============================
+   Owner Cell
+   ============================ */
+.owner-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.owner-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #1d4ed8;
+  color: #bfdbfe;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ============================
+   SLA / Overdue
+   ============================ */
+.sla-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.overdue-text {
+  color: #f87171;
+  font-weight: 600;
+}
+
+.overdue-icon-sm {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #ef4444;
+}
+
+.overdue-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: #ef4444;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ============================
+   Progress Card
+   ============================ */
+.progress-card-body {
+  align-items: center;
+}
+
+.progress-pct-display {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #60a5fa;
+  line-height: 1;
+}
+
+.detail-progress-bar {
+  width: 100%;
+  height: 10px !important;
+  border-radius: 5px !important;
+  margin: 8px 0;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+/* ============================
+   Notes Card
+   ============================ */
+.note-text {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ============================
+   Responsive
+   ============================ */
+@media (max-width: 768px) {
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .id-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .id-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .update-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .field-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .field-value,
+  .sla-value {
+    text-align: left;
+    justify-content: flex-start;
+  }
+}

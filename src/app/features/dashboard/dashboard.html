@@ -1,0 +1,272 @@
+<div class="dashboard-container">
+  <!-- Top Operational Header -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-icon">
+        <mat-icon>cell_tower</mat-icon>
+      </div>
+      <div>
+        <h1 class="app-title">Telecom Operations Platform</h1>
+        <p class="app-subtitle">Work Orders Delivery & SLA Governance Center</p>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <mat-slide-toggle [ngModel]="simulateErrorToggle()" (ngModelChange)="simulateErrorToggle.set($event)" color="warn"
+        class="sim-toggle">
+        <span class="toggle-label">
+          Simulate API Failure (500)
+        </span>
+      </mat-slide-toggle>
+
+      <button mat-stroked-button (click)="loadData()" [disabled]="isLoading()" class="refresh-btn">
+        <mat-icon [class.spinning]="isLoading()">refresh</mat-icon>
+        <span>Refresh Data</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Summary Metrics Row -->
+  <section class="metrics-grid">
+    <app-metric-card
+      label="Total Work Orders"
+      [value]="summaryMetrics().totalCount"
+      icon="assignment"
+      type="total"
+    ></app-metric-card>
+
+    <app-metric-card
+      label="Overdue SLA"
+      [value]="summaryMetrics().overdueCount"
+      icon="alarm_off"
+      type="overdue"
+      valueColor="red"
+      [isAlert]="summaryMetrics().overdueCount > 0"
+      [tag]="summaryMetrics().overdueCount > 0 ? 'Action Required' : undefined"
+      tagType="danger"
+    ></app-metric-card>
+
+    <app-metric-card
+      label="SLA Compliance Rate"
+      [value]="summaryMetrics().slaCompliancePct + '%'"
+      icon="verified"
+      type="compliance"
+      valueColor="green"
+    ></app-metric-card>
+
+    <app-metric-card
+      label="Blocked Work Orders"
+      [value]="summaryMetrics().blockedCount"
+      icon="block"
+      type="blocked"
+      valueColor="warning"
+    ></app-metric-card>
+  </section>
+
+  <!-- Filters & Search Toolbar -->
+  <section class="toolbar-card">
+    <div class="search-box">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        placeholder="Filter by Site, Owner, or Work Order ID (e.g. Site 4839)..."
+        [value]="filterTerm()"
+        (input)="onFilterInput($event)"
+        class="search-input"
+      />
+      <button
+        *ngIf="filterTerm()"
+        mat-icon-button
+        (click)="clearFilter()"
+        class="clear-btn"
+        aria-label="Clear filter"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label>Region:</label>
+        <select [ngModel]="regionFilter()" (ngModelChange)="regionFilter.set($event)" class="custom-select">
+          <option value="ALL">All Regions</option>
+          <option value="AMER">AMER - Americas</option>
+          <option value="EMEA">EMEA - Europe, Middle East & Africa</option>
+          <option value="APAC">APAC - Asia Pacific</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Status:</label>
+        <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" class="custom-select">
+          <option value="ALL">All Statuses</option>
+          <option value="New">New</option>
+          <option value="Planned">Planned</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Blocked">Blocked</option>
+          <option value="Done">Done</option>
+        </select>
+      </div>
+
+      <div class="results-count">
+        Showing <strong>{{ filteredWorkOrders().length }}</strong> of {{ workOrders().length }} orders
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Heavy Table Container (500 rows) -->
+  <main class="table-container">
+    @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading telecommunication work orders from REST API...</p>
+    </div>
+    } @else if (loadError()) {
+    <div class="error-state">
+      <mat-icon class="large-error-icon">wifi_off</mat-icon>
+      <h3>Connection Failed</h3>
+      <p>{{ loadError() }}</p>
+      <button mat-raised-button color="primary" (click)="loadData()">Retry Connection</button>
+    </div>
+    } @else {
+    <div class="table-responsive">
+      <table mat-table [dataSource]="paginatedWorkOrders()" class="custom-mat-table">
+
+        <!-- Work Order ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> ID </th>
+          <td mat-cell *matCellDef="let row">
+            <a [routerLink]="['/work-orders', row.id]" class="id-link">
+              <span class="id-code">{{ row.id }}</span>
+            </a>
+          </td>
+        </ng-container>
+
+        <!-- Site Column -->
+        <ng-container matColumnDef="site">
+          <th mat-header-cell *matHeaderCellDef> Site Location </th>
+          <td mat-cell *matCellDef="let row">
+            <span class="site-name">{{ row.site }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Region Column -->
+        <ng-container matColumnDef="region">
+          <th mat-header-cell *matHeaderCellDef> Region </th>
+          <td mat-cell *matCellDef="let row">
+            <app-region-chip [region]="row.region"></app-region-chip>
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let row">
+            <app-status-badge [status]="row.status"></app-status-badge>
+          </td>
+        </ng-container>
+
+        <!-- Priority Column -->
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef> Priority </th>
+          <td mat-cell *matCellDef="let row">
+            <app-priority-pill [priority]="row.priority"></app-priority-pill>
+          </td>
+        </ng-container>
+
+        <!-- Owner Column -->
+        <ng-container matColumnDef="owner">
+          <th mat-header-cell *matHeaderCellDef> Assigned Owner </th>
+          <td mat-cell *matCellDef="let row">
+            <div class="owner-cell">
+              <div class="owner-avatar">{{ row.owner.charAt(0) }}</div>
+              <span>{{ row.owner }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- SLA Due At Column -->
+        <ng-container matColumnDef="slaDueAt">
+          <th mat-header-cell *matHeaderCellDef> SLA Due Date </th>
+          <td mat-cell *matCellDef="let row">
+          @if(isOverdue(row.slaDueAt, row.status)) {
+            <span class="sla-cell" [class.overdue]="isOverdue(row.slaDueAt, row.status)">
+              <mat-icon  class="overdue-icon">warning</mat-icon>
+              {{ row.slaDueAt | date:'short' }}
+            </span>
+          }
+          </td>
+        </ng-container>
+
+        <!-- Progress Pct Column -->
+        <ng-container matColumnDef="progressPct">
+          <th mat-header-cell *matHeaderCellDef> Progress </th>
+          <td mat-cell *matCellDef="let row">
+            <div class="progress-cell">
+              <mat-progress-bar mode="determinate" [value]="row.progressPct" class="custom-progress"
+                [class.done]="row.status === 'Done'"></mat-progress-bar>
+              <span class="progress-text">{{ row.progressPct }}%</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let row">
+            <div class="table-actions">
+              <button mat-stroked-button color="accent" size="small" class="view-btn"
+                [routerLink]="['/work-orders', row.id]">
+                <mat-icon>visibility</mat-icon>
+                <span>View</span>
+              </button>
+              <button mat-flat-button color="primary" size="small" class="action-btn" (click)="openUpdateModal(row)">
+                <mat-icon>edit</mat-icon>
+                <span>Update</span>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+
+        <!-- No matching rows -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-table-cell" [attr.colspan]="displayedColumns.length">
+            No work orders match the filter term "{{ filterTerm() }}".
+          </td>
+        </tr>
+      </table>
+    </div>
+    }
+
+    <!-- Pagination controls -->
+    <div class="table-pagination" *ngIf="filteredWorkOrders().length > 0">
+      <div class="pagination-left">
+        <label>Rows per page:</label>
+        <select [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)">
+          <option *ngFor="let s of pageSizes" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+      <div class="pagination-center">
+        <button mat-icon-button (click)="goToPage(pageIndex() - 1)" [disabled]="pageIndex() === 0">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span>Page {{ pageIndex() + 1 }} of {{ Math.max(1, Math.ceil(filteredWorkOrders().length / pageSize())) }}</span>
+        <button mat-icon-button (click)="goToPage(pageIndex() + 1)" [disabled]="(pageIndex()+1) * pageSize() >= filteredWorkOrders().length">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+      <div class="pagination-right">
+        <span>{{ (pageIndex() * pageSize()) + 1 }} - {{ Math.min(filteredWorkOrders().length, (pageIndex()+1) * pageSize()) }} of {{ filteredWorkOrders().length }}</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Single Step Status Update Modal / Drawer Component -->
+  @if (selectedWorkOrder()) {
+  <status-update-model     [workOrder]="selectedWorkOrder()!" [simulateErrorToggle]="simulateErrorToggle()"
+    (closed)="closeUpdateModal()" (updated)="onWorkOrderUpdated($event)"></status-update-model>
+  }
+</div>

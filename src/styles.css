@@ -1,1 +1,175 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+	Consolidated global stylesheet
+	- Combines existing component styles from app/features into one file
+	- Ensures full-screen layout and responsive behavior
+	- Organized in sections: variables, reset, base, layout, components, utilities, responsive
+*/
+
+:root {
+	/* Light theme: white background, light blue primary, orange accents */
+	--bg-900: #ffffff; /* page background */
+	--bg-800: #f6fbff; /* subtle light-blue surface */
+	--card: #f0fbff; /* card background */
+	--muted: #6b7280;
+	--border: #e6f2f8;
+	--primary: #38bdf8; /* light blue */
+	--danger: #fb923c; /* orange */
+	--success: #10b981;
+	--accent: #fb923c; /* orange */
+	--text: #0f172a; /* dark text for contrast on white */
+}
+
+/* Reset / sensible defaults */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html, body, app-root {
+	height: 100%;
+	min-height: 100vh;
+}
+
+body {
+	margin: 0;
+	font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+	background: var(--bg-900);
+	color: var(--text);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+img, svg {
+	max-width: 100%;
+	height: auto;
+}
+
+/* Layout helpers */
+.app-container, .dashboard-container {
+	width: 100%;
+	margin: 0 auto;
+	padding: clamp(12px, 2.5vw, 32px);
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	min-height: 100vh; /* always full screen */
+	box-sizing: border-box;
+}
+
+.full-screen {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Header */
+.app-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px 20px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+}
+
+.brand-group { display:flex; align-items:center; gap:16px; }
+.brand-icon { width:48px; height:48px; border-radius:10px; background: linear-gradient(135deg,#2563eb,#3b82f6); display:flex; align-items:center; justify-content:center; color:#fff }
+.app-title { margin:0; font-size:1.35rem; font-weight:700 }
+.app-subtitle { margin:2px 0 0 0; font-size:0.85rem; color:var(--muted) }
+
+/* Controls */
+.header-controls { display:flex; align-items:center; gap:20px }
+.sim-toggle { background: rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.14); padding:6px 12px; border-radius:8px }
+.toggle-label { font-size:0.825rem; font-weight:600; color:#fca5a5 }
+.refresh-btn { display:flex; align-items:center; gap:6px; color:var(--text); border-color: #475569 }
+.spinning { animation: spin 1s linear infinite }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+/* Metrics Cards */
+.metrics-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 16px;
+}
+
+.metric-card {
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 16px 18px;
+	display:flex; align-items:center; gap:16px; position:relative; transition:transform .18s ease, box-shadow .18s ease
+}
+.metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.45) }
+.metric-card.alert { border-color: var(--danger); background: linear-gradient(135deg,var(--card), rgba(239,68,68,0.06)) }
+.metric-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff }
+.metric-icon.total{ background: #3b82f6 }
+.metric-icon.overdue{ background: #ef4444 }
+.metric-icon.compliance{ background: #10b981 }
+.metric-icon.blocked{ background: #f59e0b }
+.metric-info { display:flex; flex-direction:column }
+.metric-label { font-size:0.8rem; color:var(--muted); text-transform:uppercase; font-weight:600 }
+.metric-value { font-size:1.6rem; font-weight:700; color:var(--text) }
+.metric-value.red{ color:#f87171 }
+.metric-value.green{ color:#34d399 }
+.metric-tag { position:absolute; top:12px; right:12px; padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:700 }
+.metric-tag.danger { background: var(--danger); color:#fff }
+
+/* Toolbar & Filters */
+.toolbar-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 20px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px }
+.search-box { position:relative; flex:1; min-width:220px; display:flex; align-items:center }
+.search-icon { position:absolute; left:12px; color:#64748b; pointer-events:none }
+.search-input { width:100%; padding:10px 40px; background: var(--bg-800); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.9rem }
+.search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.14) }
+.clear-btn { position:absolute; right:6px; color:#64748b }
+.filter-controls{ display:flex; align-items:center; gap:16px; flex-wrap:wrap }
+
+/* Modal / Status Update */
+.modal-overlay {
+	position: fixed; inset:0; background: rgba(15,23,42,0.75); backdrop-filter: blur(4px); display:flex; align-items:center; justify-content:center; z-index:1000; animation: fadeIn .2s ease-out
+}
+.modal-card { background: var(--card); border:1px solid var(--border); border-radius:12px; width:100%; max-width:520px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); color:var(--text); overflow:hidden }
+.modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); background: var(--bg-800) }
+.modal-title { margin:0; font-size:1.25rem; font-weight:600 }
+.modal-body { padding:20px; display:flex; flex-direction:column; gap:20px }
+.work-order-summary { background: var(--bg-800); border:1px solid var(--border); border-radius:8px; padding:12px 16px; display:flex; flex-direction:column; gap:8px }
+.summary-item { display:flex; justify-content:space-between; align-items:center }
+.summary-item .label { color:var(--muted) }
+.summary-item .value { font-weight:500; color:#f1f5f9 }
+.status-badge { padding:2px 10px; border-radius:9999px; font-size:0.75rem; font-weight:600 }
+.status-badge[data-status="New"] { background:#1e3a8a; color:#93c5fd }
+.status-badge[data-status="Planned"] { background:#312e81; color:#c7d2fe }
+.status-badge[data-status="In Progress"] { background:#065f46; color:#6ee7b7 }
+.status-badge[data-status="Blocked"] { background:#881337; color:#fca5a5 }
+.status-badge[data-status="Done"] { background:#14532d; color:#86efac }
+.modal-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:12px }
+
+/* Alerts */
+.error-banner { background: rgba(225,29,72,0.12); border:1px solid #f43f5e; border-radius:8px; padding:12px 16px; display:flex; gap:12px; color:#fecdd3 }
+.error-content strong { display:block; color:#ffe4e6; font-size:0.875rem }
+.error-content p { margin:4px 0 0 0; font-size:0.8125rem }
+
+/* Utilities */
+.full-width { width:100% }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; border:1px solid transparent }
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+	.app-title { font-size: 1.15rem }
+	.brand-icon { width:40px; height:40px }
+	.metrics-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) }
+	.search-box { min-width: 160px }
+}
+
+@media (max-width: 560px) {
+	.header-controls { gap:10px }
+	.toolbar-card { padding:12px }
+	.dashboard-container { padding: 12px }
+	.app-header { padding:12px }
+	.metric-value { font-size:1.2rem }
+}
+
+@keyframes fadeIn { from { opacity:0; transform: scale(.98) } to { opacity:1; transform: scale(1) } }
+
+/* End of consolidated styles */

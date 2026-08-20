@@ -1,0 +1,195 @@
+<div class="detail-container">
+
+  <!-- Header / Nav Bar -->
+  <header class="detail-header">
+    <button mat-stroked-button (click)="goBack()" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Back to Dashboard</span>
+    </button>
+    <div class="header-title-group">
+      <div class="header-icon">
+        <mat-icon>assignment</mat-icon>
+      </div>
+      <div>
+        <h1 class="header-title">Work Order Detail</h1>
+        <p class="header-subtitle">Full record view &amp; status management</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <mat-slide-toggle
+        [ngModel]="simulateErrorToggle()"
+        (ngModelChange)="simulateErrorToggle.set($event)"
+        color="warn"
+        class="sim-toggle"
+      >
+        <span class="toggle-label">Simulate API Failure (500)</span>
+      </mat-slide-toggle>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="state-container">
+      <mat-spinner diameter="52"></mat-spinner>
+      <p class="state-text">Loading work order...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (loadError()) {
+    <div class="state-container">
+      <mat-icon class="state-icon error-icon">wifi_off</mat-icon>
+      <h2 class="state-heading">Connection Failed</h2>
+      <p class="state-text">{{ loadError() }}</p>
+      <button mat-raised-button color="primary" (click)="ngOnInit()">Retry</button>
+    </div>
+  }
+
+  <!-- Not Found State -->
+  @else if (notFound()) {
+    <div class="state-container">
+      <mat-icon class="state-icon">search_off</mat-icon>
+      <h2 class="state-heading">Work Order Not Found</h2>
+      <p class="state-text">The requested work order ID does not exist in the system.</p>
+      <button mat-raised-button color="primary" (click)="goBack()">Return to Dashboard</button>
+    </div>
+  }
+
+  <!-- Detail Content -->
+  @else if (workOrder()) {
+    <div class="detail-content">
+
+      <!-- Work Order ID Banner -->
+      <div class="id-banner">
+        <div class="id-label">Work Order</div>
+        <div class="id-value">{{ workOrder()!.id }}</div>
+        <div class="id-actions">
+          <button mat-flat-button color="primary" (click)="openUpdateModal()" class="update-btn">
+            <mat-icon>edit</mat-icon>
+            <span>Update Status</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Detail Grid -->
+      <div class="detail-grid">
+
+        <!-- Status & Priority Card -->
+        <div class="detail-card highlight-card">
+          <div class="card-header">
+            <mat-icon>info</mat-icon>
+            <span>Status &amp; Priority</span>
+          </div>
+          <div class="card-body">
+            <div class="field-row">
+              <span class="field-label">Current Status</span>
+              <app-status-badge [status]="workOrder()!.status"></app-status-badge>
+            </div>
+            <div class="field-row">
+              <span class="field-label">Priority Level</span>
+              <app-priority-pill [priority]="workOrder()!.priority"></app-priority-pill>
+            </div>
+            <div class="field-row">
+              <span class="field-label">Region</span>
+              <app-region-chip [region]="workOrder()!.region"></app-region-chip>
+            </div>
+          </div>
+        </div>
+
+        <!-- Site & Owner Card -->
+        <div class="detail-card">
+          <div class="card-header">
+            <mat-icon>location_on</mat-icon>
+            <span>Site &amp; Ownership</span>
+          </div>
+          <div class="card-body">
+            <div class="field-row">
+              <span class="field-label">Site Location</span>
+              <span class="field-value">{{ workOrder()!.site }}</span>
+            </div>
+            <div class="field-row">
+              <span class="field-label">Assigned Owner</span>
+              <div class="owner-cell">
+                <div class="owner-avatar">{{ workOrder()!.owner.charAt(0) }}</div>
+                <span class="field-value">{{ workOrder()!.owner }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLA & Dates Card -->
+        <div class="detail-card" [class.overdue-card]="isOverdue(workOrder()!.slaDueAt, workOrder()!.status)">
+          <div class="card-header">
+            <mat-icon>schedule</mat-icon>
+            <span>SLA &amp; Dates</span>
+          </div>
+          <div class="card-body">
+            <div class="field-row">
+              <span class="field-label">SLA Due Date</span>
+              <span class="field-value sla-value" [class.overdue-text]="isOverdue(workOrder()!.slaDueAt, workOrder()!.status)">
+                @if (isOverdue(workOrder()!.slaDueAt, workOrder()!.status)) {
+                  <mat-icon class="overdue-icon-sm">warning</mat-icon>
+                }
+                {{ workOrder()!.slaDueAt | date:'medium' }}
+                @if (isOverdue(workOrder()!.slaDueAt, workOrder()!.status)) {
+                  <span class="overdue-badge">OVERDUE</span>
+                }
+              </span>
+            </div>
+            <div class="field-row">
+              <span class="field-label">Last Updated</span>
+              <span class="field-value">{{ workOrder()!.lastUpdatedAt | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Card -->
+        <div class="detail-card">
+          <div class="card-header">
+            <mat-icon>trending_up</mat-icon>
+            <span>Progress</span>
+          </div>
+          <div class="card-body progress-card-body">
+            <div class="progress-pct-display">{{ workOrder()!.progressPct }}%</div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="workOrder()!.progressPct"
+              class="detail-progress-bar"
+              [class.done]="workOrder()!.status === 'Done'"
+            ></mat-progress-bar>
+            <div class="progress-labels">
+              <span>0%</span>
+              <span>Complete</span>
+              <span>100%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Card -->
+        @if (workOrder()!.note) {
+          <div class="detail-card notes-card">
+            <div class="card-header">
+              <mat-icon>notes</mat-icon>
+              <span>Notes / Update Reason</span>
+            </div>
+            <div class="card-body">
+              <p class="note-text">{{ workOrder()!.note }}</p>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+  }
+
+  <!-- Status Update Modal -->
+  @if (showUpdateModal() && workOrder()) {
+    <status-update-model
+      [workOrder]="workOrder()!"
+      [simulateErrorToggle]="simulateErrorToggle()"
+      (closed)="closeUpdateModal()"
+      (updated)="onWorkOrderUpdated($event)"
+    ></status-update-model>
+  }
+
+</div>

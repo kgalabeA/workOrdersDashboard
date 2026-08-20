@@ -1,0 +1,12 @@
+<div class="metric-card" [class.alert]="isAlert">
+  <div class="metric-icon" [ngClass]="type">
+    <mat-icon>{{ icon }}</mat-icon>
+  </div>
+  <div class="metric-info">
+    <span class="metric-label">{{ label }}</span>
+    <span class="metric-value" [ngClass]="valueColor">{{ value }}</span>
+  </div>
+  @if (tag) {
+    <span class="metric-tag" [ngClass]="tagType">{{ tag }}</span>
+  }
+</div>

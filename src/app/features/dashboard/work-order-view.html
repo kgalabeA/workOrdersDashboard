@@ -1,0 +1,54 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <span class="modal-badge">{{ workOrder.id }}</span>
+        <h2 class="modal-title">Work Order Details</h2>
+      </div>
+      <button mat-icon-button (click)="close()" type="button" aria-label="Close modal">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="work-order-summary">
+        <div class="summary-item">
+          <span class="label">Site:</span>
+          <span class="value">{{ workOrder.site }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Region:</span>
+          <span class="value">{{ workOrder.region }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Owner:</span>
+          <span class="value">{{ workOrder.owner }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Priority:</span>
+          <span class="value">{{ workOrder.priority }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Status:</span>
+          <span class="value">{{ workOrder.status }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">SLA Due:</span>
+          <span class="value">{{ workOrder.slaDueAt | date:'short' }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Progress:</span>
+          <span class="value">{{ workOrder.progressPct }}%</span>
+        </div>
+        <div class="summary-item" *ngIf="workOrder.note">
+          <span class="label">Note:</span>
+          <span class="value">{{ workOrder.note }}</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button mat-stroked-button type="button" (click)="close()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
