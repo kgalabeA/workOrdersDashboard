@@ -1,59 +1,61 @@
-# WorkOrdersDashboard
+# Telecom Infrastructure Work Orders Dashboard
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.8.
+A lightweight, modern Angular 20+ standalone application for managing 500+ telecommunications infrastructure work orders with single-step REST updates, SLA metrics, reactive signals, and simulated latency/failure handling.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Quick Start
 
+### 1. Prerequisites
+- **Node.js**: `v18.0.0` or higher (tested on Node v24.18.0)
+- **npm**: `v9.0.0` or higher
+
+### 2. Installation
+Clone the repository and install all dependencies:
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+### 3. Generate Seed Data (Optional)
+The project comes pre-seeded with `db.json` containing 500 reproducible work orders. To re-generate fresh reproducible seed data at any time:
 ```bash
-ng generate component component-name
+npm run generate-data
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+### 4. Run Locally (Single Command)
+Run both the REST API server (`json-server` on `http://localhost:3000`) and the Angular app (`http://localhost:4200`) concurrently with a single command:
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Open your browser to [http://localhost:4200](http://localhost:4200).
 
-To build the project run:
+---
 
+## 🧪 Running Unit Tests
+
+Run the Angular CLI test suite (runs in headless Chrome):
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Test Coverage Highlights
+- **Service Unit Tests** (`src/app/services/work-order.service.spec.ts`):
+  - `GET /workOrders` happy path returning 500 items.
+  - `PATCH /workOrders/:id` failure path verifying HTTP 500 error propagation.
+- **Component Unit Tests** (`src/app/components/dashboard/dashboard.component.spec.ts`):
+  - Reactive signal filter set size calculation.
+  - Computed SLA overdue and compliance summary metrics.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## ⚡ Testing Error & Latency Handling (Task 2)
 
-```bash
-ng test
-```
+The application simulates network latency (600ms) and provides two convenient ways to test simulated REST API failure:
+1. **Header Toggle**: Flip the **"Simulate API Failure (500)"** toggle switch in the top header. Any subsequent status update will fail with an HTTP 500 error.
+2. **Keyword Trigger**: In the status update modal note textarea, type `"fail"` (e.g. *"Hardware defect fail"*).
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Expected Behavior on Failure:
+- An inline error banner is rendered inside the modal without a full page reload.
+- The original work order status in the table remains unchanged.
+- The user can edit their input and retry submitting directly.
