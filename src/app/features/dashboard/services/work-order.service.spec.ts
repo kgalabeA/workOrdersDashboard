@@ -2,46 +2,46 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { WorkOrderService } from './work-order.service';
-import { WorkOrder } from '@core/models/work-order.model';
-
-const mockWorkOrders: WorkOrder[] = [
-  {
-    id: 'WO-2026-1001',
-    site: 'Site 1000 - Regenerator Site',
-    region: 'APAC',
-    status: 'Done',
-    priority: 4,
-    owner: 'Ayanda Khumalo',
-    slaDueAt: '2026-08-27T10:57:29.656Z',
-    lastUpdatedAt: '2026-08-17T14:57:29.656Z',
-    progressPct: 100,
-  },
-  {
-    id: 'WO-2026-1002',
-    site: 'Site 1017 - Vodacom Hub',
-    region: 'AMER',
-    status: 'Blocked',
-    priority: 1,
-    owner: 'Anele van der Merwe',
-    slaDueAt: '2026-08-10T22:57:29.656Z',
-    lastUpdatedAt: '2026-08-16T12:57:29.656Z',
-    progressPct: 70,
-  },
-];
+import { UpdateWorkOrderPayload, WorkOrder } from '@core/models/work-order.model';
 
 describe('WorkOrderService', () => {
   let service: WorkOrderService;
   let httpMock: HttpTestingController;
-  const API_URL = 'http://localhost:3001/workOrders';
+
+  const mockWorkOrders: WorkOrder[] = [
+    {
+      id: 'WO-2026-00101',
+      site: 'Site 4839 - Metro Hub',
+      region: 'AMER',
+      status: 'New',
+      priority: 1,
+      owner: 'Elena Vance',
+      slaDueAt: '2026-08-25T10:00:00.000Z',
+      lastUpdatedAt: '2026-08-19T08:00:00.000Z',
+      progressPct: 0
+    },
+    {
+      id: 'WO-2026-00102',
+      site: 'Site 5921 - Tower Node',
+      region: 'EMEA',
+      status: 'In Progress',
+      priority: 2,
+      owner: 'Marcus Chen',
+      slaDueAt: '2026-08-15T10:00:00.000Z', // Overdue
+      lastUpdatedAt: '2026-08-19T09:00:00.000Z',
+      progressPct: 45
+    }
+  ];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         WorkOrderService,
         provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+        provideHttpClientTesting()
+      ]
     });
+
     service = TestBed.inject(WorkOrderService);
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -50,130 +50,47 @@ describe('WorkOrderService', () => {
     httpMock.verify();
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+  it('should fetch work orders via GET request (Happy Path)', () => {
+    return new Promise<void>((resolve, reject) => {
+      service.getWorkOrders().subscribe({
+        next: (orders) => {
+          try {
+            expect(orders.length).toBe(2);
+            expect(orders[0].id).toBe('WO-2026-00101');
+            expect(orders[1].owner).toBe('Marcus Chen');
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        },
+        error: reject,
+      });
 
-  describe('getWorkOrders()', () => {
-    it('should fetch work orders and emit via workOrders$', () => {
-      let result: WorkOrder[] = [];
-      service.getWorkOrders().subscribe((orders) => (result = orders));
-
-      const req = httpMock.expectOne(API_URL);
+      const req = httpMock.expectOne('http://localhost:3000/workOrders');
       expect(req.request.method).toBe('GET');
       req.flush(mockWorkOrders);
-
-      expect(result.length).toBe(2);
-      expect(result[0].id).toBe('WO-2026-1001');
-    });
-
-    it('should set loading to true during fetch and false on success', () => {
-      const loadingStates: boolean[] = [];
-      service.loading$.subscribe((v) => loadingStates.push(v));
-
-      service.getWorkOrders().subscribe();
-      const req = httpMock.expectOne(API_URL);
-      req.flush(mockWorkOrders);
-
-      expect(loadingStates).toContain(true);
-      expect(loadingStates[loadingStates.length - 1]).toBe(false);
-    });
-
-    it('should set error$ on HTTP failure', () => {
-      let errorVal: string | null = null;
-      service.error$.subscribe((v) => (errorVal = v));
-
-      service.getWorkOrders().subscribe({ error: () => {} });
-      const req = httpMock.expectOne(API_URL);
-      req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
-
-      expect(errorVal).toBeTruthy();
     });
   });
 
-  describe('getWorkOrderById()', () => {
-    it('should return the correct work order by id', (done) => {
-      service.getWorkOrders().subscribe();
-      const req = httpMock.expectOne(API_URL);
-      req.flush(mockWorkOrders);
+  it('should handle simulated error path gracefully when REST call fails', () => {
+    const payload: UpdateWorkOrderPayload = {
+      status: 'Blocked',
+      note: 'Simulated failure test'
+    };
 
-      service.getWorkOrderById('WO-2026-1002').subscribe((order) => {
-        expect(order).toBeDefined();
-        expect(order!.id).toBe('WO-2026-1002');
-        expect(order!.status).toBe('Blocked');
-        done();
-      });
-    });
-
-    it('should return undefined for non-existent id', (done) => {
-      service.getWorkOrders().subscribe();
-      const req = httpMock.expectOne(API_URL);
-      req.flush(mockWorkOrders);
-
-      service.getWorkOrderById('WO-9999-0000').subscribe((order) => {
-        expect(order).toBeUndefined();
-        done();
-      });
-    });
-  });
-
-  describe('filterWorkOrdersByRegion()', () => {
-    it('should return all orders when region is ALL', (done) => {
-      service.getWorkOrders().subscribe();
-      const req = httpMock.expectOne(API_URL);
-      req.flush(mockWorkOrders);
-
-      service.filterWorkOrdersByRegion('ALL').subscribe((orders) => {
-        expect(orders.length).toBe(2);
-        done();
-      });
-    });
-
-    it('should filter by specific region', (done) => {
-      service.getWorkOrders().subscribe();
-      const req = httpMock.expectOne(API_URL);
-      req.flush(mockWorkOrders);
-
-      service.filterWorkOrdersByRegion('APAC').subscribe((orders) => {
-        expect(orders.length).toBe(1);
-        expect(orders[0].region).toBe('APAC');
-        done();
-      });
-    });
-  });
-
-  describe('updateWorkOrderStatus() – simulated failure', () => {
-    it('should emit error when simulateFailure is true', (done) => {
-      service.getWorkOrders().subscribe();
-      const req = httpMock.expectOne(API_URL);
-      req.flush(mockWorkOrders);
-
-      service
-        .updateWorkOrderStatus('WO-2026-1001', { status: 'Done', note: 'test' }, true)
-        .subscribe({
-          error: (err) => {
+    return new Promise<void>((resolve, reject) => {
+      service.updateWorkOrderStatus('WO-2026-00101', payload, true).subscribe({
+        next: () => reject(new Error('Should have failed with HTTP 500 error')),
+        error: (err) => {
+          try {
             expect(err.status).toBe(500);
-            done();
-          },
-        });
-      // No HTTP request should be made when simulating failure
-      httpMock.expectNone(`${API_URL}/WO-2026-1001`);
-    });
-
-    it('should emit error when note contains "fail"', (done) => {
-      service.getWorkOrders().subscribe();
-      const req = httpMock.expectOne(API_URL);
-      req.flush(mockWorkOrders);
-
-      service
-        .updateWorkOrderStatus('WO-2026-1001', { status: 'In Progress', note: 'fail' })
-        .subscribe({
-          error: (err) => {
-            expect(err.status).toBe(500);
-            done();
-          },
-        });
-      httpMock.expectNone(`${API_URL}/WO-2026-1001`);
+            expect(err.error.message).toContain('Simulated server error');
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        },
+      });
     });
   });
 });

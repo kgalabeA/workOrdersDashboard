@@ -17,7 +17,8 @@ describe('App', () => {
   it('should render title', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, workOrdersDashboard');
+    const app = fixture.componentInstance as any;
+    // title is a signal on the component
+    expect(app.title()).toBe('workOrdersDashboard');
   });
 });

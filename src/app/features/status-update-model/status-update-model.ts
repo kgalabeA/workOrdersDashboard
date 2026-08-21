@@ -1,16 +1,17 @@
-import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WorkOrderService } from '@features/dashboard/services/work-order.service';
 import { WorkOrder, WorkOrderStatus } from '@core/models/work-order.model';
 import { SharedModule } from '@shared/shared-module';
+import { StatusBadge } from "@shared/components/status-badge/status-badge";
 
 @Component({
-  imports: [SharedModule],
+  imports: [SharedModule, StatusBadge],
   selector: 'status-update-model',
   styleUrl: './status-update-model.css',
   templateUrl: './status-update-model.html',
 })
-export class StatusUpdateModel {
+export class StatusUpdateModel implements OnInit {
   @Input({ required: true }) workOrder!: WorkOrder;
   @Input() simulateErrorToggle = false;
   @Output() closed = new EventEmitter<void>();
@@ -25,26 +26,26 @@ export class StatusUpdateModel {
 
   updateForm!: FormGroup;
 
-  ngOnInit = (): void => {
+  ngOnInit(): void {
     this.updateForm = this.fb.group({
       status: [this.workOrder.status, [Validators.required]],
       note: [this.workOrder.note || '']
     });
   }
 
-  onBackdropClick = (event: MouseEvent): void => {
+  onBackdropClick(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.close();
     }
   }
 
-  close = (): void => {
+  close(): void {
     if (!this.isSubmitting()) {
       this.closed.emit();
     }
   }
 
-  submitUpdate = (): void => {
+  submitUpdate(): void {
     if (this.updateForm.invalid || this.isSubmitting()) return;
 
     this.isSubmitting.set(true);
@@ -72,3 +73,4 @@ export class StatusUpdateModel {
     });
   }
 }
+

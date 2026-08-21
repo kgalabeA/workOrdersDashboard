@@ -59,3 +59,22 @@ The application simulates network latency (600ms) and provides two convenient wa
 - An inline error banner is rendered inside the modal without a full page reload.
 - The original work order status in the table remains unchanged.
 - The user can edit their input and retry submitting directly.
+
+
+### AI tools
+- Antigravity was used throughout the project to assist with development, UI design, styling, testing, and improving the overall code quality.
+
+- AI assistance was also used to help configure a fake/mock backend, allowing the application to be developed and tested without relying on a live production backend.
+
+- The following tasks were completed with AI assistance:
+    * Mock/Fake Backend
+       - Assisted with setting up the fake backend and mock data structure.
+    * Data Generation
+      - Stabilized the generate-data file to ensure it consistently generates 500 records.
+    * UI/UX Design
+     - Assisted with designing a clean, modern interface appropriate for a telecommunications company.
+    * Code Quality
+      - Reviewed existing code and suggested improvements to make it cleaner and easier to maintain.
+    * Documentation & Development Support
+      - AI was used as a development assistant for understanding errors, reviewing implementation approaches, and suggesting improvements.
+      - It was also used to help explain unfamiliar code and provide alternative implementation approaches where appropriate.

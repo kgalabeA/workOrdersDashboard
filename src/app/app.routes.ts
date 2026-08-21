@@ -10,11 +10,8 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: Dashboard
-  },
-  {
-  path: 'work-order/:id',
-  loadComponent: () => import('@features/work-order-detail/work-order-detail').then(m => m.WorkOrderDetail)
+    component: Dashboard,
+    title: 'Dashboard | Telecom Work Orders',
   },
   {
     path: '**',

@@ -6,17 +6,16 @@
 */
 
 :root {
-	/* Light theme: white background, light blue primary, orange accents */
-	--bg-900: #ffffff; /* page background */
-	--bg-800: #f6fbff; /* subtle light-blue surface */
-	--card: #f0fbff; /* card background */
-	--muted: #6b7280;
-	--border: #e6f2f8;
-	--primary: #38bdf8; /* light blue */
-	--danger: #fb923c; /* orange */
+	--bg-900: #0f172a;
+	--bg-800: #0f172a;
+	--card: #1e293b;
+	--muted: #94a3b8;
+	--border: #334155;
+	--primary: #3b82f6;
+	--danger: #ef4444;
 	--success: #10b981;
-	--accent: #fb923c; /* orange */
-	--text: #0f172a; /* dark text for contrast on white */
+	--accent: #f59e0b;
+	--text: #f8fafc;
 }
 
 /* Reset / sensible defaults */

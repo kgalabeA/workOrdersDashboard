@@ -6,7 +6,8 @@
     "server": "json-server --watch db.json --port 3000",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --watch=false --no-progress --browsers=ChromeHeadlessCI",
+    "test": "set VITEST_BROWSER=chromium&& ng test --watch=false",
+    "test:ci": "cross-env VITEST_BROWSER=chromium ng test --watch=false",
     "lint": "ng lint",
     "generate-data": "tsx scripts/generate-data.ts"
   },
@@ -28,12 +29,14 @@
     "@angular/build": "^22.0.8",
     "@angular/cli": "^22.0.8",
     "@angular/compiler-cli": "^22.0.0",
+    "@vitest/browser-playwright": "^4.1.11",
+    "cross-env": "^7.0.3",
     "concurrently": "^10.0.5",
     "jsdom": "^28.0.0",
     "json-server": "^1.0.0-beta.15",
     "prettier": "^3.8.1",
-    "typescript": "~6.0.2",
     "tsx": "^4.19.2",
+    "typescript": "~6.0.2",
     "vitest": "^4.0.8"
   }
 }

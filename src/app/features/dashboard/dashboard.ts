@@ -106,9 +106,19 @@ private workOrderService = inject(WorkOrderService);
     };
   });
 
-  ngOnInit = (): void => {
-    this.loadData();
-  };
+  ngOnInit(): void {
+    // populate from service subject when available
+    this.workOrderService.workOrders$.subscribe((list) => {
+      if (list && list.length) {
+        this.workOrders.set(list);
+      }
+    });
+
+    // ensure a fetch occurs when opening the dashboard if there's no data yet
+    if (!this.workOrders() || this.workOrders().length === 0) {
+      this.loadData();
+    }
+  }
 
   loadData = (): void => {
     this.isLoading.set(true);

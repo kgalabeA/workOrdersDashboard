@@ -52,6 +52,25 @@
       color: #f8fafc;
     }
 
+    /* Ensure any element using .text-color shows white text inside modal */
+    .modal-card .text-color,
+    .modal-card textarea.text-color,
+    .modal-card .mat-input-element.text-color {
+      color: #ffffff !important;
+    }
+
+    /* Placeholder color for textarea and inputs inside modal */
+    .modal-card textarea.text-color::placeholder,
+    .modal-card input.text-color::placeholder {
+      color: #94a3b8 !important;
+      opacity: 0.95;
+    }
+
+    /* Webkit/moz/ms vendor placeholders */
+    .modal-card textarea.text-color::-webkit-input-placeholder { color: #94a3b8 !important; }
+    .modal-card textarea.text-color::-moz-placeholder { color: #94a3b8 !important; }
+    .modal-card textarea.text-color:-ms-input-placeholder { color: #94a3b8 !important; }
+
     .modal-body {
       padding: 24px;
       display: flex;

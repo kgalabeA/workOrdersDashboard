@@ -22,9 +22,7 @@
             </div>
             <div class="summary-item">
               <span class="label">Current Status:</span>
-              <span class="status-badge" [attr.data-status]="workOrder.status">
-                {{ workOrder.status }}
-              </span>
+              <app-status-badge [status]="workOrder.status"></app-status-badge>
             </div>
           </div>
 
@@ -40,20 +38,22 @@
 
           <form [formGroup]="updateForm" (ngSubmit)="submitUpdate()">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>New Status</mat-label>
-              <mat-select formControlName="status">
+              <mat-label class="text-color">New Status</mat-label>
+              <mat-select class="text-color" formControlName="status">
                 @for (opt of statusOptions; track opt) {
                   <mat-option [value]="opt">{{ opt }}</mat-option>
                 }
               </mat-select>
-              <mat-error *ngIf="updateForm.get('status')?.hasError('required')">
+              @if(updateForm.get('status')?.hasError('required')){
+              <mat-error >
                 Status is required
               </mat-error>
+            }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Reason / Update Note (Optional)</mat-label>
-              <textarea
+              <textarea class="text-color"
                 matInput
                 formControlName="note"
                 rows="3"

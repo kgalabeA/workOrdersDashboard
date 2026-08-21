@@ -26,6 +26,10 @@
   gap: 16px;
 }
 
+.text-white {
+  color: #f8fafc;
+}
+
 .brand-icon {
   width: 48px;
   height: 48px;
